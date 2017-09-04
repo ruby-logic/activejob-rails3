@@ -40,7 +40,13 @@ module ActiveJob
       #      # Might raise Net::OpenTimeout when the remote service is down
       #    end
       #  end
-      def retry_on(exception, wait: 3.seconds, attempts: 5, queue: nil, priority: nil)
+      def retry_on(exception, opts = {})
+
+        wait = opts[:wait] || 3.seconds
+        attempts = opts[:attempts] || 5
+        queue = opts[:queue] || nil
+        priority = opts[:priority] || nil
+
         rescue_from exception do |error|
           if executions < attempts
             logger.error "Retrying #{self.class} in #{wait} seconds, due to a #{exception}. The original exception was #{error.cause.inspect}."

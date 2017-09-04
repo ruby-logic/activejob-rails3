@@ -3,6 +3,8 @@ require "concurrent/scheduled_task"
 require "concurrent/executor/thread_pool_executor"
 require "concurrent/utility/processor_counter"
 
+# TODO: Backport this?
+
 module ActiveJob
   module QueueAdapters
     # == Active Job Async adapter
@@ -30,8 +32,8 @@ module ActiveJob
     # short-lived jobs. Fine for dev/test; bad for production.
     class AsyncAdapter
       # See {Concurrent::ThreadPoolExecutor}[http://ruby-concurrency.github.io/concurrent-ruby/Concurrent/ThreadPoolExecutor.html] for executor options.
-      def initialize(**executor_options)
-        @scheduler = Scheduler.new(**executor_options)
+      def initialize(executor_options = {})
+        @scheduler = Scheduler.new(executor_options)
       end
 
       def enqueue(job) #:nodoc:
@@ -45,7 +47,11 @@ module ActiveJob
       # Gracefully stop processing jobs. Finishes in-progress work and handles
       # any new jobs following the executor's fallback policy (`caller_runs`).
       # Waits for termination by default. Pass `wait: false` to continue.
-      def shutdown(wait: true) #:nodoc:
+      def shutdown(opts = {}) #:nodoc:
+        default_options = { wait: true}
+        opts = default_options.merge(opts)
+
+        wait = opts[:wait]
         @scheduler.shutdown wait: wait
       end
 
@@ -81,17 +87,19 @@ module ActiveJob
 
         attr_accessor :immediate
 
-        def initialize(**options)
+        def initialize(options = {})
           self.immediate = false
           @immediate_executor = Concurrent::ImmediateExecutor.new
           @async_executor = Concurrent::ThreadPoolExecutor.new(DEFAULT_EXECUTOR_OPTIONS.merge(options))
         end
 
-        def enqueue(job, queue_name:)
+        def enqueue(job, opts = {})
+          queue_name = opts[:queue_name] || nil
           executor.post(job, &:perform)
         end
 
-        def enqueue_at(job, timestamp, queue_name:)
+        def enqueue_at(job, timestamp, opts = {})
+          queue_name = opts[:queue_name] || nil
           delay = timestamp - Time.current.to_f
           if delay > 0
             Concurrent::ScheduledTask.execute(delay, args: [job], executor: executor, &:perform)
@@ -100,7 +108,11 @@ module ActiveJob
           end
         end
 
-        def shutdown(wait: true)
+        def shutdown(opts = {})
+          default_options = { wait: true}
+          opts = default_options.merge(opts)
+
+          wait = opts[:wait]
           @async_executor.shutdown
           @async_executor.wait_for_termination if wait
         end

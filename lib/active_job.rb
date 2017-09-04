@@ -22,9 +22,14 @@
 #++
 
 require "active_support"
-require "active_support/rails"
+# require "active_support/rails"
+require "rails"
+require "active_job/railtie" if defined?(Rails)
 require "active_job/version"
-require "global_id"
+require "active_job/core_ext/class/attribute"
+require "active_job/core_ext/hash/transform_values"
+require "active_job/core_ext/hash/keys"
+# require "global_id"
 
 module ActiveJob
   extend ActiveSupport::Autoload

@@ -1,14 +1,13 @@
-require "active_support/core_ext/hash/transform_values"
 require "active_support/core_ext/string/filters"
 require "active_support/tagged_logging"
-require "active_support/logger"
+# require "active_support/logger"
 
 module ActiveJob
   module Logging #:nodoc:
     extend ActiveSupport::Concern
 
     included do
-      cattr_accessor(:logger) { ActiveSupport::TaggedLogging.new(ActiveSupport::Logger.new(STDOUT)) }
+      cattr_accessor(:logger) { ActiveSupport::TaggedLogging.new(Logger.new(STDOUT)) }
 
       around_enqueue do |_, block, _|
         tag_logger do
@@ -48,7 +47,8 @@ module ActiveJob
       end
 
       def logger_tagged_by_active_job?
-        logger.formatter.current_tags.include?("ActiveJob")
+        # logger.formatter.current_tags.include?("ActiveJob")
+        false
       end
 
       class LogSubscriber < ActiveSupport::LogSubscriber #:nodoc:
@@ -107,8 +107,8 @@ module ActiveJob
               arg.transform_values { |value| format(value) }
             when Array
               arg.map { |value| format(value) }
-            when GlobalID::Identification
-              arg.to_global_id rescue arg
+            # when GlobalID::Identification
+            #   arg.to_global_id rescue arg
             else
               arg
             end

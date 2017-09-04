@@ -104,7 +104,10 @@ module ActiveJob
     #       HelloJob.perform_later('elfassy')
     #     end
     #   end
-    def assert_enqueued_jobs(number, only: nil, queue: nil)
+    def assert_enqueued_jobs(number, opts = {})
+      only = opts[:only] || nil
+      queue = opts[:queue] || nil
+
       if block_given?
         original_count = enqueued_jobs_size(only: only, queue: queue)
         yield
@@ -143,7 +146,8 @@ module ActiveJob
     # Note: This assertion is simply a shortcut for:
     #
     #   assert_enqueued_jobs 0, &block
-    def assert_no_enqueued_jobs(only: nil, &block)
+    def assert_no_enqueued_jobs(opts = {}, &block)
+      only = opts[:only] || nil
       assert_enqueued_jobs 0, only: only, &block
     end
 
@@ -200,7 +204,8 @@ module ActiveJob
     #         end
     #       end
     #     end
-    def assert_performed_jobs(number, only: nil)
+    def assert_performed_jobs(number, opts = {})
+      only = opts[:only] || nil
       if block_given?
         original_count = performed_jobs.size
         perform_enqueued_jobs(only: only) { yield }
@@ -244,7 +249,8 @@ module ActiveJob
     # Note: This assertion is simply a shortcut for:
     #
     #   assert_performed_jobs 0, &block
-    def assert_no_performed_jobs(only: nil, &block)
+    def assert_no_performed_jobs(opts = {}, &block)
+      only = opts[:only] || nil
       assert_performed_jobs 0, only: only, &block
     end
 
@@ -259,7 +265,12 @@ module ActiveJob
     #       MyJob.set(wait_until: Date.tomorrow.noon).perform_later
     #     end
     #   end
-    def assert_enqueued_with(job: nil, args: nil, at: nil, queue: nil)
+    def assert_enqueued_with(opts = {})
+      job = opts[:job] || nil
+      args = opts[:args] || nil
+      at = opts[:at] || nil
+      queue = opts[:queue] || nil
+
       original_enqueued_jobs_count = enqueued_jobs.count
       expected = { job: job, args: args, at: at, queue: queue }.compact
       serialized_args = serialize_args_for_assertion(expected)
@@ -283,7 +294,12 @@ module ActiveJob
     #       MyJob.set(wait_until: Date.tomorrow.noon).perform_later
     #     end
     #   end
-    def assert_performed_with(job: nil, args: nil, at: nil, queue: nil)
+    def assert_performed_with(opts = {})
+      job = opts[:job] || nil
+      args = opts[:args] || nil
+      at = opts[:at] || nil
+      queue = opts[:queue] || nil
+
       original_performed_jobs_count = performed_jobs.count
       expected = { job: job, args: args, at: at, queue: queue }.compact
       serialized_args = serialize_args_for_assertion(expected)
@@ -315,7 +331,9 @@ module ActiveJob
     #     end
     #     assert_performed_jobs 1
     #   end
-    def perform_enqueued_jobs(only: nil)
+    def perform_enqueued_jobs(opts = {})
+      only = opts[:only] || nil
+
       old_perform_enqueued_jobs = queue_adapter.perform_enqueued_jobs
       old_perform_enqueued_at_jobs = queue_adapter.perform_enqueued_at_jobs
       old_filter = queue_adapter.filter
@@ -350,7 +368,10 @@ module ActiveJob
         performed_jobs.clear
       end
 
-      def enqueued_jobs_size(only: nil, queue: nil)
+      def enqueued_jobs_size(opts = {})
+        only = opts[:only] || nil
+        queue = opts[:queue] || nil
+
         enqueued_jobs.count do |job|
           job_class = job.fetch(:job)
           if only

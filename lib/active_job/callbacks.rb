@@ -1,4 +1,4 @@
-require "active_support/callbacks"
+require "active_job/active_support_backport/callbacks"
 
 module ActiveJob
   # = Active Job Callbacks
@@ -15,10 +15,10 @@ module ActiveJob
   #
   module Callbacks
     extend  ActiveSupport::Concern
-    include ActiveSupport::Callbacks
+    include ActiveSupportBackport::Callbacks
 
     class << self
-      include ActiveSupport::Callbacks
+      include ActiveSupportBackport::Callbacks
       define_callbacks :execute
     end
 

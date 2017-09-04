@@ -54,8 +54,8 @@ module ActiveJob
         case argument
         when *TYPE_WHITELIST
           argument
-        when GlobalID::Identification
-          convert_to_global_id_hash(argument)
+        # when GlobalID::Identification
+        #   convert_to_global_id_hash(argument)
         when Array
           argument.map { |arg| serialize_argument(arg) }
         when ActiveSupport::HashWithIndifferentAccess
@@ -75,17 +75,19 @@ module ActiveJob
       def deserialize_argument(argument)
         case argument
         when String
-          GlobalID::Locator.locate(argument) || argument
+          argument
+          # GlobalID::Locator.locate(argument) || argument
         when *TYPE_WHITELIST
           argument
         when Array
           argument.map { |arg| deserialize_argument(arg) }
         when Hash
-          if serialized_global_id?(argument)
-            deserialize_global_id argument
-          else
-            deserialize_hash(argument)
-          end
+          # if serialized_global_id?(argument)
+          #   deserialize_global_id argument
+          # else
+          #   deserialize_hash(argument)
+          # end
+          deserialize_hash(argument)
         else
           raise ArgumentError, "Can only deserialize primitive arguments: #{argument.inspect}"
         end
@@ -95,9 +97,9 @@ module ActiveJob
         hash.size == 1 && hash.include?(GLOBALID_KEY)
       end
 
-      def deserialize_global_id(hash)
-        GlobalID::Locator.locate hash[GLOBALID_KEY]
-      end
+      # def deserialize_global_id(hash)
+      #   GlobalID::Locator.locate hash[GLOBALID_KEY]
+      # end
 
       def serialize_hash(argument)
         argument.each_with_object({}) do |(key, value), hash|
@@ -144,11 +146,11 @@ module ActiveJob
         end
       end
 
-      def convert_to_global_id_hash(argument)
-        { GLOBALID_KEY => argument.to_global_id.to_s }
-      rescue URI::GID::MissingModelIdError
-        raise SerializationError, "Unable to serialize #{argument.class} " \
-          "without an id. (Maybe you forgot to call save?)"
-      end
+      # def convert_to_global_id_hash(argument)
+      #   { GLOBALID_KEY => argument.to_global_id.to_s }
+      # rescue URI::GID::MissingModelIdError
+      #   raise SerializationError, "Unable to serialize #{argument.class} " \
+      #     "without an id. (Maybe you forgot to call save?)"
+      # end
   end
 end
