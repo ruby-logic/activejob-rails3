@@ -35,6 +35,8 @@ module ActiveJob
       class_attribute :queue_name, instance_accessor: false
       class_attribute :queue_name_delimiter, instance_accessor: false
 
+      puts "#{self}: #{default_queue_name}"
+
       self.queue_name = default_queue_name
       self.queue_name_delimiter = "_" # set default delimiter to '_'
     end

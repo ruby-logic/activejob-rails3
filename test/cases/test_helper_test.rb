@@ -1,11 +1,12 @@
 require "helper"
-require "active_support/core_ext/time"
-require "active_support/core_ext/date"
+# require "active_support/core_ext/time"
+# require "active_support/core_ext/date"
 require "jobs/hello_job"
 require "jobs/logging_job"
 require "jobs/nested_job"
 require "jobs/rescue_job"
 require "jobs/inherited_job"
+# require "jobs/queue_adapter_job"
 require "models/person"
 
 class EnqueuedJobsTest < ActiveJob::TestCase

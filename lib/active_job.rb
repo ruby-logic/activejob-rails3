@@ -27,8 +27,10 @@ require "rails"
 require "active_job/railtie" if defined?(Rails)
 require "active_job/version"
 require "active_job/core_ext/class/attribute"
+require "active_job/core_ext/module/attribute_accessors"
 require "active_job/core_ext/hash/transform_values"
 require "active_job/core_ext/hash/keys"
+require "active_job/core_ext/string/filters"
 # require "global_id"
 
 module ActiveJob

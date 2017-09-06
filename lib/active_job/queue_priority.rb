@@ -28,6 +28,8 @@ module ActiveJob
 
     included do
       class_attribute :priority, instance_accessor: false
+      # class_attribute :priority, instance_reader: false, instance_writter: false
+      # class_attribute :priority
 
       self.priority = default_priority
     end

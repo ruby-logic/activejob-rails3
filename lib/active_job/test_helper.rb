@@ -1,5 +1,5 @@
 require "active_support/core_ext/class/subclasses"
-require "active_support/core_ext/hash/keys"
+require "active_job/core_ext/hash/keys"
 
 module ActiveJob
   # Provides helper methods for testing Active Job
@@ -12,7 +12,7 @@ module ActiveJob
       extend ActiveSupport::Concern
 
       included do
-        class_attribute :_test_adapter, instance_accessor: false, instance_predicate: false
+        class_attribute :_test_adapter, instance_reader: false, instance_writter: false
       end
 
       module ClassMethods
@@ -30,7 +30,10 @@ module ActiveJob
       end
     end
 
-    ActiveJob::Base.include(TestQueueAdapter)
+    # ActiveJob::Base.include(TestQueueAdapter)
+    ActiveJob::Base.class_eval do
+      include TestQueueAdapter
+    end
 
     def before_setup # :nodoc:
       test_adapter = queue_adapter_for_test

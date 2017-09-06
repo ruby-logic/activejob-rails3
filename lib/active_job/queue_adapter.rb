@@ -7,7 +7,7 @@ module ActiveJob
     extend ActiveSupport::Concern
 
     included do
-      class_attribute :_queue_adapter, instance_accessor: false, instance_predicate: false
+      class_attribute :_queue_adapter, instance_reader: false, instance_writter: false
       self.queue_adapter = :async
     end
 

@@ -19,7 +19,8 @@ class ArgumentSerializationTest < ActiveSupport::TestCase
     end
   end
 
-  [ :a, Object.new, self, Person.find("5").to_gid ].each do |arg|
+  # [ :a, Object.new, self, Person.find("5").to_gid ].each do |arg|
+  [ :a, Object.new, self, Person.find("5") ].each do |arg|
     test "does not serialize #{arg.class}" do
       assert_raises ActiveJob::SerializationError do
         ActiveJob::Arguments.serialize [ arg ]
@@ -31,9 +32,10 @@ class ArgumentSerializationTest < ActiveSupport::TestCase
     end
   end
 
-  test "should convert records to Global IDs" do
-    assert_arguments_roundtrip [@person]
-  end
+  # Requires GlobalID
+  # test "should convert records to Global IDs" do
+  #   assert_arguments_roundtrip [@person]
+  # end
 
   test "should dive deep into arrays and hashes" do
     assert_arguments_roundtrip [3, [@person]]
@@ -89,11 +91,19 @@ class ArgumentSerializationTest < ActiveSupport::TestCase
     assert_equal "Job with argument: 2", JobBuffer.last_value
   end
 
-  test "raises a friendly SerializationError for records without ids" do
+  #  Requires GlobalID
+  # test "raises a friendly SerializationError for records without ids" do
+  #   err = assert_raises ActiveJob::SerializationError do
+  #     ActiveJob::Arguments.serialize [Person.new(nil)]
+  #   end
+  #   assert_match "Unable to serialize Person without an id.", err.message
+  # end
+
+  test "raises a friendly SerializationError for records" do
     err = assert_raises ActiveJob::SerializationError do
       ActiveJob::Arguments.serialize [Person.new(nil)]
     end
-    assert_match "Unable to serialize Person without an id.", err.message
+    assert_match "Unsupported argument type: Person", err.message
   end
 
   private

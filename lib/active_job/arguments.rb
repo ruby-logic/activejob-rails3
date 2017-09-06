@@ -1,4 +1,5 @@
 require "active_support/core_ext/hash"
+require "bigdecimal"
 
 module ActiveJob
   # Raised when an exception is raised during job arguments deserialization.
