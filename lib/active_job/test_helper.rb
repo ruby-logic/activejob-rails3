@@ -4,6 +4,7 @@ require "active_job/core_ext/hash/keys"
 module ActiveJob
   # Provides helper methods for testing Active Job
   module TestHelper
+
     delegate :enqueued_jobs, :enqueued_jobs=,
       :performed_jobs, :performed_jobs=,
       to: :queue_adapter
@@ -35,7 +36,7 @@ module ActiveJob
       include TestQueueAdapter
     end
 
-    def before_setup # :nodoc:
+    def setup # :nodoc:
       test_adapter = queue_adapter_for_test
 
       queue_adapter_changed_jobs.each do |klass|
@@ -47,7 +48,7 @@ module ActiveJob
       super
     end
 
-    def after_teardown # :nodoc:
+    def teardown # :nodoc:
       super
 
       queue_adapter_changed_jobs.each { |klass| klass.disable_test_adapter }
