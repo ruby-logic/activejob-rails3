@@ -1,5 +1,3 @@
-require "/home/econtrer/Projects/sencillito/modyo-platform/config/environment.rb"
-
 require "active_job"
 require "support/job_buffer"
 require "active_support"
