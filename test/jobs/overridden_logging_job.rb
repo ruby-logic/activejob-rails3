@@ -4,6 +4,6 @@ class OverriddenLoggingJob < ActiveJob::Base
   end
 
   def logger
-    @logger ||= ActiveSupport::TaggedLogging.new(ActiveSupport::Logger.new(nil))
+    @logger ||= ActiveSupport::TaggedLogging.new(Logger.new(nil))
   end
 end

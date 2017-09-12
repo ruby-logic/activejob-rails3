@@ -25,7 +25,7 @@ ActiveSupport::TestCase.include(TestCaseHelpers)
 
 JobsManager.current_manager.start_workers
 
-Minitest.after_run do
+MiniTest.after_run do
   JobsManager.current_manager.stop_workers
   JobsManager.current_manager.clear_jobs
 end

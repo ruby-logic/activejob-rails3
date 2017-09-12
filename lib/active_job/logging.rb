@@ -1,4 +1,4 @@
-require "active_support/core_ext/string/filters"
+require "active_job/core_ext/string/filters"
 require "active_support/tagged_logging"
 # require "active_support/logger"
 
@@ -48,7 +48,10 @@ module ActiveJob
 
       def logger_tagged_by_active_job?
         # logger.formatter.current_tags.include?("ActiveJob")
-        false
+        # This should be fetched from ActiveSupport::TaggedLogging, but it's not supported
+        # in the version for this backport
+        current_tags = Thread.current[:activesupport_tagged_logging_tags] || []
+        current_tags.include?("ActiveJob")
       end
 
       class LogSubscriber < ActiveSupport::LogSubscriber #:nodoc:
@@ -74,11 +77,13 @@ module ActiveJob
         end
 
         def perform(event)
+
           job = event.payload[:job]
-          ex = event.payload[:exception_object]
+          ex = event.payload[:exception]
           if ex
             error do
-              "Error performing #{job.class.name} (Job ID: #{job.job_id}) from #{queue_name(event)} in #{event.duration.round(2)}ms: #{ex.class} (#{ex.message}):\n" + Array(ex.backtrace).join("\n")
+              # "Error performing #{job.class.name} (Job ID: #{job.job_id}) from #{queue_name(event)} in #{event.duration.round(2)}ms: #{ex.class} (#{ex.message}):\n" + Array(ex.backtrace).join("\n")
+              "Error performing #{job.class.name} (Job ID: #{job.job_id}) from #{queue_name(event)} in #{event.duration.round(2)}ms: #{ex.first} (#{ex.last})"
             end
           else
             info do

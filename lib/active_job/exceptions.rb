@@ -48,14 +48,15 @@ module ActiveJob
         priority = opts[:priority] || nil
 
         rescue_from exception do |error|
+          # Rails.logger.debug "[Retry on] Exception: Exception => #{exception.inspect}, opts => #{opts.inspect}, error: #{error.inspect}"
           if executions < attempts
-            logger.error "Retrying #{self.class} in #{wait} seconds, due to a #{exception}. The original exception was #{error.cause.inspect}."
+            logger.error "Retrying #{self.class} in #{wait} seconds, due to a #{exception}. The original exception was #{error.inspect}."
             retry_job wait: determine_delay(wait), queue: queue, priority: priority
           else
             if block_given?
               yield self, exception
             else
-              logger.error "Stopped retrying #{self.class} due to a #{exception}, which reoccurred on #{executions} attempts. The original exception was #{error.cause.inspect}."
+              logger.error "Stopped retrying #{self.class} due to a #{exception}, which reoccurred on #{executions} attempts. The original exception was #{error.inspect}."
               raise error
             end
           end
@@ -76,7 +77,7 @@ module ActiveJob
       #  end
       def discard_on(exception)
         rescue_from exception do |error|
-          logger.error "Discarded #{self.class} due to a #{exception}. The original exception was #{error.cause.inspect}."
+          logger.error "Discarded #{self.class} due to a #{exception}. The original exception was #{error.inspect}."
         end
       end
     end

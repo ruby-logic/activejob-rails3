@@ -43,7 +43,7 @@ MyJob.perform_later record  # Enqueue a job to be performed as soon as the queue
 ```
 
 ```ruby
-MyJob.set(wait_until: Date.tomorrow.noon).perform_later(record)  # Enqueue a job to be performed tomorrow at noon.
+MyJob.set(wait_until: Date.tomorrow.to_time.change(hour: 12)).perform_later(record)  # Enqueue a job to be performed tomorrow at noon.
 ```
 
 ```ruby
