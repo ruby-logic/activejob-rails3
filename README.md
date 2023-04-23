@@ -17,5 +17,5 @@ We do not encourage using this gem because ActiveJob is not properly implemented
 However, if you're absolutely sure that this is what you want, you may as well try it as follows:
 
 ```
-gem 'active_job', :git => 'https://github.com/ruby-logic/activejob.git', :branch => 'rails-3.2-backport'
+gem 'active_job', :git => 'https://github.com/ruby-logic/activejob-rails3.git'
 ```
