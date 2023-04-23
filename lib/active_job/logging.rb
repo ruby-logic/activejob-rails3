@@ -130,4 +130,4 @@ module ActiveJob
   end
 end
 
-ActiveJob::Logging::LogSubscriber.attach_to :active_job
+# ActiveJob::Logging::LogSubscriber.attach_to :active_job
